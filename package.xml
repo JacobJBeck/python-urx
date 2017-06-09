@@ -6,8 +6,8 @@
   <description>
     Universal Robot driver
   </description>
-  <author>Olivier Roulet-Dubonnet</author>
-  <maintainer>Olivier Roulet-Dubonnet</maintainer>
+  <author email="olivier.roulet@gmail.com">Olivier Roulet-Dubonnet</author>
+  <maintainer email="olivier.roulet@gmail.com">Olivier Roulet-Dubonnet</maintainer>
   <license>Apache License 2.0</license>
 
   <export>
