@@ -8,8 +8,8 @@ setup(
     install_requires=['setuptools'],
     author = "Olivier Roulet-Dubonnet",
     author_email = "olivier.roulet@gmail.com",
-    maintainer='Adam Allevato',
-    maintainer_email='allevato@osrfoundation.org',
+    maintainer='Olivier Roulet-Dubonnet',
+    maintainer_email='olivier.roulet@gmail.com',
     keywords=['ROS'],
     classifiers=[
         "Programming Language :: Python",

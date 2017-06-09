@@ -7,7 +7,7 @@
     Universal Robot driver
   </description>
   <author>Olivier Roulet-Dubonnet</author>
-  <maintainer email="adam.d.allevato@gmail.com">Adam Allevato</maintainer>
+  <maintainer>Olivier Roulet-Dubonnet</maintainer>
   <license>Apache License 2.0</license>
 
   <export>
