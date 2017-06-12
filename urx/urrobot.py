@@ -197,7 +197,7 @@ class URRobot(object):
         prog = "set_tool_voltage(%s)" % (val)
         self.send_program(prog)
 
-    def _wait_for_move(self, target, threshold=None, timeout=5, joints=False):
+    def _wait_for_move(self, target, threshold=None, timeout=10, joints=False):
         """
         wait for a move to complete. Unfortunately there is no good way to know when a move has finished
         so for every received data from robot we compute a dist equivalent and when it is lower than
