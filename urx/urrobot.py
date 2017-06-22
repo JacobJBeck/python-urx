@@ -33,6 +33,8 @@ class URRobot(object):
         self.logger = logging.getLogger("urx")
         self.host = host
         self.csys = None
+        self.moving = False
+        self.threshold = 0.001
 
         self.logger.debug("Opening secondary monitor socket")
         self.secmon = ursecmon.SecondaryMonitor(self.host)  # data from robot at 10Hz
@@ -59,6 +61,20 @@ class URRobot(object):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
+    def is_moving(self):
+        if not self.is_running():
+            print("not running")
+            return False
+        dist = self._get_dist(self.target, False)
+        self.logger.debug("distance to target is: %s, target dist is %s", dist, self.threshold)
+        if not self.secmon.is_program_running():
+            if dist < self.threshold:
+                print("thresholded to target")
+                self.logger.debug("we are threshold(%s) close to target, move has ended", self.threshold)
+                return False
+            count += 1
+        return True
 
     def is_running(self):
         """
@@ -206,24 +222,28 @@ class URRobot(object):
         """
         self.logger.debug("Waiting for move completion using threshold %s and target %s", threshold, target)
         start_dist = self._get_dist(target, joints)
-        if threshold is None:
-            threshold = start_dist * 0.8
-            if threshold < 0.001:  # roboten precision is limited
-                threshold = 0.001
-            self.logger.debug("No threshold set, setting it to %s", threshold)
+        self.threshold = threshold
+        if self.threshold is None:
+            self.threshold = start_dist * 0.8
+            if self.threshold < 0.001:  # roboten precision is limited
+                self.threshold = 0.001
+            self.logger.debug("No threshold set, setting it to %s", self.threshold)
         count = 0
         while True:
             if not self.is_running():
+                self.moving = False
                 raise RobotException("Robot stopped")
             dist = self._get_dist(target, joints)
             self.logger.debug("distance to target is: %s, target dist is %s", dist, threshold)
             if not self.secmon.is_program_running():
-                if dist < threshold:
-                    self.logger.debug("we are threshold(%s) close to target, move has ended", threshold)
+                if dist < self.threshold:
+                    self.logger.debug("we are threshold(%s) close to target, move has ended", self.threshold)
+                    self.moving = False
                     return
                 count += 1
                 if count > timeout * 10:
                     raise RobotException("Goal not reached but no program has been running for {} seconds. dist is {}, threshold is {}, target is {}, current pose is {}".format(timeout, dist, threshold, target, URRobot.getl(self)))
+                    self.moving = False
             else:
                 count = 0
 
@@ -312,6 +332,8 @@ class URRobot(object):
             tpose = [v + l[i] for i, v in enumerate(tpose)]
         prog = self._format_move(command, tpose, acc, vel, prefix="p")
         self.send_program(prog)
+        self.moving = True
+        self.target = tpose[:6]
         if wait:
             self._wait_for_move(tpose[:6], threshold=threshold)
             return self.getl()
@@ -371,9 +393,11 @@ class URRobot(object):
 
     def stopl(self, acc=0.5):
         self.send_program("stopl(%s)" % acc)
+        self.moving = False
 
     def stopj(self, acc=1.5):
         self.send_program("stopj(%s)" % acc)
+        self.moving = False
 
     def stop(self):
         self.stopj()
