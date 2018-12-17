@@ -2,14 +2,17 @@ from setuptools import setup
 
 setup(
     name='python_urx',
-    version='0.10.0',
-    packages=["urx"],
+    version='0.11.0',
+    description="Python library to control an UR robot",
+    packages=['urx'],
+    provides=['urx'],
     py_modules=[],
-    install_requires=['setuptools'],
-    author = "Olivier Roulet-Dubonnet",
-    author_email = "olivier.roulet@gmail.com",
-    maintainer='Olivier Roulet-Dubonnet',
-    maintainer_email='olivier.roulet@gmail.com',
+    install_requires=['setuptools', 'numpy', 'math3d'],
+    author="Olivier Roulet-Dubonnet",
+    author_email='olivier.roulet@gmail.com',
+    maintainer="Jacob Beck",
+    maintainer_email='beck@madeinspace.us',
+    license="GNU Lesser General Public License v3",
     keywords=['ROS'],
     classifiers=[
         "Programming Language :: Python",
@@ -20,9 +23,5 @@ setup(
         "Topic :: System :: Hardware :: Hardware Drivers",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    description=(
-        "Python library to control an UR robot"
-    ),
-    license='GNU Lesser General Public License v3',
     entry_points={},
 )

@@ -411,15 +411,18 @@ class URRobot(object):
         if self.rtmon:
             self.rtmon.stop()
 
-    def set_freedrive(self, val):
+    def set_freedrive(self, val, timeout=60):
         """
-        set robot in freedrive/brackdrive mode where an operator can jogg
-        the robot to wished pose
+        set robot in freedrive/backdrive mode where an operator can jog
+        the robot to wished pose.
+
+        Freedrive will timeout at 60 seconds.
         """
         if val:
-            self.send_program("set robotmode freedrive")
+            self.send_program("def myProg():\n\tfreedrive_mode()\n\tsleep({})\nend".format(timeout))
         else:
-            self.send_program("set robotmode run")
+            # This is a non-existant program, but running it will stop freedrive
+            self.send_program("def myProg():\n\tend_freedrive_mode()\nend")
 
     def set_simulation(self, val):
         if val:
